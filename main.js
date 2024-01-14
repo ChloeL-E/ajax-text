@@ -1,10 +1,56 @@
-var XHR = new XMLHttpRequest(); //inbuilt javascript method to consume javascript APIs
+const baseURL = "https://ci-swapi.herokuapp.com/api/";
 
-XHR.onreadystatechange = function() {
-    if(this.readyState == 4 && this.status == 200) {
-        document.getElementById("data").innerHTML = this.responseText;
-    }
-};
+function getData(type, cb) {
+    var xhr = new XMLHttpRequest();
 
-XHR.open("GET", "https://ci-swapi.herokuapp.com/");
-XHR.send();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            cb(JSON.parse(this.responseText));
+        }
+    };
+
+    xhr.open("GET", baseURL + type + "/");
+    xhr.send();
+}
+
+function getTableHeaders(obj) {
+    var tableHeaders = [];
+
+    Object.keys(obj).forEach(function(key){
+        tableHeaders.push(`<td>${key}</td>`);
+    });
+    return `<tr>${tableHeaders}</tr>`
+}
+
+function writeToDocument(type) {
+    var tableRows = [];
+    var el = document.getElementById("data"); //el short for element
+    el.innerHTML = ""; //will clear data each time its clicked
+
+    getData(type, function(data) {
+ //     console.dir(data);         lets you see the properties and format
+        data = data.results
+        var tableHeaders = getTableHeaders(data[0]);
+
+        data.forEach(function(item){
+            var dataRow = [];
+
+            Object.keys(item).forEach(function(key){
+                var rowData = item[key].toString();
+                var truncatedData = rowData.substring(0, 15)
+                dataRow.push(`<td>${truncatedData}</td>`);
+            });
+            tableRows.push(`<tr>${dataRow}</tr>`);
+ //           el.innerHTML += "<p>" + item.name + "</p>";
+        });
+        el.innerHTML = `<table>${tableHeaders}${tableRows}</table>`;
+    });
+}
+
+// setTimeout(function() { //this setTimout() function gets data after 500(0.5 seconds), only executed once.
+//    console.log(data);
+// }, 500);
+
+
+
+
