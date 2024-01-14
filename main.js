@@ -57,7 +57,7 @@ function writeToDocument(url) {
             //el.innerHTML += "<p>" + item.name + "</p>"; 
         });
 
-        el.innerHTML = `<table>${tableHeaders}${tableRows}</table>${pagination}`;
+        el.innerHTML = `<table>${tableHeaders}${tableRows}</table>${pagination}`.replace(/,/g, ""); //  /,/ means find ,. g means find all, replace with empty string
     });
 }
 
